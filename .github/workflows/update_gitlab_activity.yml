@@ -29,15 +29,37 @@ jobs:
           GITHUB_REPO: 'remireci/gitlab_activity'
           IMPORT_GITLAB_GITHUB_TOKEN: ${{ secrets.IMPORT_GITLAB_GITHUB_TOKEN }}
 
-      - name: Commit and push changes
+      - name: Checkout home repo
+        uses: actions/checkout@v2
+        with:
+          repository: remireci/remireci  # replace with your home repo
+          token: ${{ secrets.IMPORT_GITLAB_GITHUB_TOKEN }}
+          path: remireci
+
+      - name: Copy PNG to home repo
+        run: cp gitlab_activity.png remireci/remireci/gitlab_activity.png
+
+      - name: Commit and push changes to home repo
         run: |
+          cd home-repo
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-          git add gitlab_activity.png README.md
+          git add path/to/save/gitlab_activity.png
           git commit -m "Update GitLab activity graph"
           git push
         env:
-          GITHUB_TOKEN: ${{ secrets.IMPORT_GITLAB_GITHUB_TOKEN }}
+          IMPORT_GITLAB_GITHUB_TOKEN: ${{ secrets.IMPORT_GITLAB_GITHUB_TOKEN }}
+
+
+      # - name: Commit and push changes
+      #   run: |
+      #     git config --global user.email "actions@github.com"
+      #     git config --global user.name "GitHub Actions"
+      #     git add gitlab_activity.png README.md
+      #     git commit -m "Update GitLab activity graph"
+      #     git push
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.IMPORT_GITLAB_GITHUB_TOKEN }}
 
       # - name: Update README
       #   if: success()

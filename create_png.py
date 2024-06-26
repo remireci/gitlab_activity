@@ -80,17 +80,17 @@ def generate_activity_heatmap(activity):
 def upload_image_to_github():
     with open(GRAPH_IMAGE_PATH, 'rb') as image_file:
         image_content = image_file.read()
-    image_base64 = base64.b64encode(image_content).decode()
 
     g = Github(GITHUB_ACCESS_TOKEN)
     repo = g.get_repo(GITHUB_REPO)
     
     try:
         contents = repo.get_contents(GRAPH_IMAGE_PATH)
-        repo.update_file(contents.path, "Update GitLab activity graph", image_base64, contents.sha, branch="main")
+        repo.update_file(contents.path, "Update GitLab activity graph", image_content, contents.sha, branch="main")
     except Exception as e:
         print(f"Creating new file: {e}")
-        repo.create_file(GRAPH_IMAGE_PATH, "Add GitLab activity graph", image_base64, branch="main")
+        repo.create_file(GRAPH_IMAGE_PATH, "Add GitLab activity graph", image_content, branch="main")
+
 
 # def update_readme_with_image():
 #     print("Starting update_readme_with_image function")

@@ -15,7 +15,7 @@ GITLAB_USER_ID = os.getenv('GITLAB_USER_ID')
 GITLAB_ACCESS_TOKEN = os.getenv('GITLAB_ACCESS_TOKEN')
 GITHUB_REPO = 'remireci/gitlab_activity'
 GITHUB_ACCESS_TOKEN = os.getenv('IMPORT_GITLAB_GITHUB_TOKEN')
-GRAPH_IMAGE_PATH = 'remireci/gitlab_activity.png'
+GRAPH_IMAGE_PATH = 'gitlab_activity.png'
 
 # Configuration
 GITLAB_API_URL = 'https://gitlab.com/api/v4/'

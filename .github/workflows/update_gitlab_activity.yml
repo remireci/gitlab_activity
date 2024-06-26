@@ -21,48 +21,23 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
 
-      - name: Clone home-repo
-        run: git clone https://github.com/remireci/remireci.git remireci
-
       - name: Generate and update activity graph
         run: python create_png.py
         env:
           GITLAB_USER_ID: ${{ secrets.GITLAB_USER_ID }}
           GITLAB_ACCESS_TOKEN: ${{ secrets.GITLAB_ACCESS_TOKEN }}
-          GITHUB_REPO: 'remireci/remireci'
+          GITHUB_REPO: 'remireci/gitlab_activity'
           IMPORT_GITLAB_GITHUB_TOKEN: ${{ secrets.IMPORT_GITLAB_GITHUB_TOKEN }}
 
-      # - name: Checkout home repo
-      #   uses: actions/checkout@v2
-      #   with:
-      #     repository: remireci/remireci  # replace with your home repo
-      #     token: ${{ secrets.IMPORT_GITLAB_GITHUB_TOKEN }}
-      #     path: remireci
-
-      # - name: Copy PNG to home repo
-      #   run: cp gitlab_activity.png remireci/remireci/gitlab_activity.png
-
-      - name: Commit and push changes to home repo
+      - name: Commit and push changes
         run: |
-          cd remireci
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-          git add remireci/gitlab_activity.png
+          git add gitlab_activity.png README.md
           git commit -m "Update GitLab activity graph"
           git push
         env:
           IMPORT_GITLAB_GITHUB_TOKEN: ${{ secrets.IMPORT_GITLAB_GITHUB_TOKEN }}
-
-
-      # - name: Commit and push changes
-      #   run: |
-      #     git config --global user.email "actions@github.com"
-      #     git config --global user.name "GitHub Actions"
-      #     git add gitlab_activity.png README.md
-      #     git commit -m "Update GitLab activity graph"
-      #     git push
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.IMPORT_GITLAB_GITHUB_TOKEN }}
 
       # - name: Update README
       #   if: success()

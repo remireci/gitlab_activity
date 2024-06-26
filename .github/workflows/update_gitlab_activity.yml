@@ -37,7 +37,7 @@ jobs:
           git commit -m "Update GitLab activity graph"
           git push
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.IMPORT_GITLAB_GITHUB_TOKEN }}
 
       # - name: Update README
       #   if: success()

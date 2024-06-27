@@ -13,7 +13,7 @@ load_dotenv()
 # Fetching secrets from environment variables
 GITLAB_USER_ID = os.getenv('GITLAB_USER_ID')
 GITLAB_ACCESS_TOKEN = os.getenv('GITLAB_ACCESS_TOKEN')
-GITHUB_REPO = 'gitlab_activity'
+GITHUB_REPO = 'remireci/gitlab_activity'
 GITHUB_ACCESS_TOKEN = os.getenv('IMPORT_GITLAB_GITHUB_TOKEN')
 GRAPH_IMAGE_PATH = 'gitlab_activity.png'
 

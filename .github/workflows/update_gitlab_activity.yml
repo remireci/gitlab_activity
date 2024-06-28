@@ -39,7 +39,7 @@ jobs:
           git config --global user.name "GitHub Actions"
           git stash  # Stash any local changes
           git pull origin main  # Pull the latest changes from the remote repository
-          git stash pop  # Apply the stashed changes
+          git stash pop || echo "No stashed changes to apply"  # Apply the stashed changes
           git add gitlab_activity.png
           git commit -m "Update GitLab activity graph" || echo "No changes to commit"
           git push origin main

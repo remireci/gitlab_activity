@@ -31,7 +31,7 @@ def fetch_gitlab_activity():
         params = {
             'per_page': per_page,
             'page': page,
-            'after': (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
+            'after': (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%dT%H:%M:%SZ')
         }
         response = requests.get(f'{GITLAB_API_URL}users/{GITLAB_USER_ID}/events', headers=headers, params=params)
         response.raise_for_status()
@@ -119,7 +119,9 @@ if __name__ == "__main__":
             exit(1)
 
         latest_activity_timestamp = get_latest_activity_timestamp(activity)
-        
+        print(f"Latest activity timestamp: {latest_activity_timestamp}")
+        print(f"Previous latest timestamp: {latest_timestamp}")
+
         if latest_timestamp is None or latest_activity_timestamp > latest_timestamp:
             generate_activity_heatmap(activity)
             upload_image_to_github()
@@ -132,48 +134,3 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"An error occurred: {e}")
         exit(1)  # Indicate an error
-
-
-
-# def update_readme_with_image():
-#     print("Starting update_readme_with_image function")
-#     g = Github(GITHUB_ACCESS_TOKEN)
-#     repo = g.get_repo(GITHUB_REPO)
-#     print(f"Fetched repository: {GITHUB_REPO}")
-
-#     try:
-#         readme = repo.get_readme()
-#         print("Fetched README file")
-#     except Exception as e:
-#         print(f"Error fetching README: {e}")
-#         return
-
-#     # Read the base64 encoded image content
-#     try:
-#         with open(GRAPH_IMAGE_PATH, 'rb') as image_file:
-#             image_content = image_file.read()
-#         image_base64 = base64.b64encode(image_content).decode()
-#         print("Encoded image to base64")
-#     except Exception as e:
-#         print(f"Error reading or encoding image: {e}")
-#         return
-
-#     # Create the Markdown image syntax with the embedded image content
-#     image_markdown = f"![GitLab Activity](data:image/png;base64,{image_base64})"
-#     print("Created markdown for image")
-
-#     # Update the README file in the repository
-#     try:
-#         repo.update_file(readme.path, "Update README with GitLab activity graph", image_markdown, readme.sha, branch="main")
-#         print("Updated README file")
-#     except Exception as e:
-#         print(f"Error updating README: {e}")
-
-if __name__ == "__main__":
-    try:
-        activity = fetch_gitlab_activity()
-        generate_activity_heatmap(activity)
-        upload_image_to_github()
-        # update_readme_with_image()
-    except Exception as e:
-        print(f"An error occurred: {e}")

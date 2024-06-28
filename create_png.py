@@ -16,6 +16,7 @@ GITLAB_ACCESS_TOKEN = os.getenv('GITLAB_ACCESS_TOKEN')
 GITHUB_REPO = 'remireci/gitlab_activity'
 GITHUB_ACCESS_TOKEN = os.getenv('IMPORT_GITLAB_GITHUB_TOKEN')
 GRAPH_IMAGE_PATH = 'gitlab_activity.png'
+TIMESTAMP_PATH = 'last_activity_timestamp.txt'
 
 # Configuration
 GITLAB_API_URL = 'https://gitlab.com/api/v4/'
@@ -41,6 +42,22 @@ def fetch_gitlab_activity():
         page += 1
 
     return activity
+
+def get_latest_activity_timestamp(activity):
+    if not activity:
+        return None
+    latest_event = max(activity, key=lambda x: x['created_at'])
+    return latest_event['created_at']
+
+def save_latest_timestamp(timestamp):
+    with open(TIMESTAMP_PATH, 'w') as file:
+        file.write(timestamp)
+
+def load_latest_timestamp():
+    if not os.path.exists(TIMESTAMP_PATH):
+        return None
+    with open(TIMESTAMP_PATH, 'r') as file:
+        return file.read().strip()
 
 def generate_activity_heatmap(activity):
     # Initialize a dictionary to count events per day for the past year
@@ -90,6 +107,32 @@ def upload_image_to_github():
     except Exception as e:
         print(f"Creating new file: {e}")
         repo.create_file(GRAPH_IMAGE_PATH, "Add GitLab activity graph", image_content, branch="main")
+
+
+if __name__ == "__main__":
+    try:
+        latest_timestamp = load_latest_timestamp()
+        activity = fetch_gitlab_activity()
+
+        if not activity:
+            print("No activity found.")
+            exit(1)
+
+        latest_activity_timestamp = get_latest_activity_timestamp(activity)
+        
+        if latest_timestamp is None or latest_activity_timestamp > latest_timestamp:
+            generate_activity_heatmap(activity)
+            upload_image_to_github()
+            save_latest_timestamp(latest_activity_timestamp)
+            print("New activity detected and graph updated.")
+            exit(0)  # Indicate success
+        else:
+            print("No new activity since the last update.")
+            exit(1)  # Indicate no new activity
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        exit(1)  # Indicate an error
+
 
 
 # def update_readme_with_image():

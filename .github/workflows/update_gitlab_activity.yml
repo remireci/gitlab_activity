@@ -32,18 +32,22 @@ jobs:
       - name: Check if there are changes to commit
         id: git_status
         run: |
-          git status --porcelain
-          echo "::set-output name=changes::$(git status --porcelain)"
+          changes=$(git status --porcelain)
+          if [ -n "$changes" ]; then
+            echo "::set-output name=changes::true"
+          else
+            echo "::set-output name=changes::false"
+          fi
         continue-on-error: true  # Continue even if there are no changes
 
       - name: Commit and push changes
-        if: steps.git_status.outputs.changes != ''
+        if: steps.git_status.outputs.changes == 'true'
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-          git stash  # Stash any local changes
           git pull origin main
-          git stash pop  # Apply the stashed changes
+          git stash  # Stash any local changes
+          git stash apply  # Apply the stashed changes (if any)
           git add gitlab_activity.png
           git commit -m "Update GitLab activity graph"
           git push origin main
